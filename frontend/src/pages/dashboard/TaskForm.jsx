@@ -94,7 +94,7 @@ export default function TaskForm({ fetchTasks, fetchSummary, closeModal, editing
             <option>Done</option>
           </select>
 
-          <input type="date" name="dueDate" value={form.dueDate} onChange={handleChange} min={todayString} readOnly={!!editingTask} />
+          <input type="date" name="dueDate" value={form.dueDate} onChange={handleChange} {...(!editingTask && { min: todayString })} />
           {errors.dueDate && <span className="error">{errors.dueDate}</span>}
 
           <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "10px", width: "100%" }}>

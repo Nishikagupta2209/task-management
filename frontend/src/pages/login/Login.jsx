@@ -36,7 +36,7 @@ export default function Login() {
       );
 
       localStorage.setItem("token", res.data.token);
-      navigate("/dashboard"); // Better than window.location
+      navigate("/task/dashboard"); // Better than window.location
     } catch (err) {
       setErrors({
         general: err.response?.data?.message || "Invalid email or password",
@@ -109,7 +109,7 @@ export default function Login() {
           {/* Register Option */}
           <p className="redirect-text">
             New user?{" "}
-            <Link to="/register" className="link">
+            <Link to="/task/register" className="link">
               Register here
             </Link>
           </p>
