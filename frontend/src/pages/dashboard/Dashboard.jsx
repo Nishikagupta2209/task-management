@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import TaskForm from "./TaskForm";
+import { io } from "socket.io-client";
 import { AiOutlineEdit, AiOutlineDelete, AiOutlineBulb } from "react-icons/ai";
 import DeleteConfirmModal from "../../modals/DeleteModal";
 import KanbanBoard from "./KanbanBoard";
 import "./Dashboard.css"; 
 
+const socket = io("http://localhost:5000");
 export default function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState({ status: "", priority: "", sortBy: "" });
@@ -17,7 +19,6 @@ export default function Dashboard() {
 
   const [darkMode, setDarkMode] = useState(false);
   const [viewMode, setViewMode] = useState("table"); // "table" or "kanban"
-
   const token = localStorage.getItem("token");
   const headers = { Authorization: `Bearer ${token}` };
 
@@ -51,12 +52,23 @@ export default function Dashboard() {
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
+  useEffect(() => {
+  socket.on("connect", () => {
+    console.log("Connected to socket:", socket.id);
+  });
+  socket.on("taskUpdated", () => {
+    console.log("Real-time update received");
+    fetchTasks();
+  });
+  return () => {
+    socket.off("taskUpdated");
+  };}, []);
+
   const handleDelete = async () => {
     if (!taskToDelete) return;
     await axios.delete(`http://localhost:5000/api/tasks/${taskToDelete}`, { headers });
     setDeleteModalOpen(false);
     setTaskToDelete(null);
-    fetchTasks();
   };
 
   const handleLogout = () => {

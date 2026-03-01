@@ -36,8 +36,8 @@ export default function KanbanBoard({ tasks, fetchTasks, darkMode }) {
 
     try {
       await axios.put(`http://localhost:5000/api/tasks/${draggableId}`, { status: movedTask.status }, { headers });
-      const updatedTasks = await fetchTasks(); // make sure fetchTasks returns tasks
-      fetchSummary(updatedTasks);
+      // const updatedTasks = await fetchTasks(); // make sure fetchTasks returns tasks
+      // fetchSummary(updatedTasks);
     } catch (error) {
       console.error("Error updating task:", error);
     }
