@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import { errorHandler } from "./middleware/errorMiddleware.js";
 import taskRoutes from "./routes/taskRoutes.js";
+import setupSwagger from "./config/swagger.js";
 
 dotenv.config();
 connectDB();
@@ -22,6 +23,7 @@ app.get("/api/dashboard", (req, res) => {
   res.json({ message: "Welcome to dashboard" });
 });
 
+setupSwagger(app);
 // Error handler
 app.use(errorHandler);
 
