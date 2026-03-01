@@ -119,7 +119,6 @@ button {
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
-  justify-content: center;
 }
 
 .task-form input, .task-form select {
@@ -269,7 +268,6 @@ button {
 .dashboard-wrapper.dark .task-table td {
   border-color: #4b5563;
 }
-
 /* Dark mode badges adjustment for visibility */
 .dashboard-wrapper.dark .badge.low { background-color: #065f46; color: #d1fae5; }
 .dashboard-wrapper.dark .badge.medium { background-color: #78350f; color: #fef3c7; }
@@ -283,30 +281,35 @@ button {
   color: #f4f4f4;
   border: 1px solid #4b5563;
 }
-
-/* Dark mode buttons */
-.dashboard-wrapper.dark button {
-  background-color: #2563eb; /* keep primary button blue */
-  color: white;
-}
-
-.dashboard-wrapper.dark .submit-btn {
-  background-color: #2563eb;
-  color: white;
-}
-
-.dashboard-wrapper.dark .submit-btn:hover {
-  background-color: #1d4ed8;
-}
-
-/* Dark mode general error */
-.dashboard-wrapper.dark .general-error {
-  background-color: #7f1d1d;
-  color: #fee2e2;
-}
-
-/* Optional: toggle button (in header) */
 .theme-toggle-btn {
   background-color: #fbbf24;
   color: #222;
+}
+.task-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.task-modal-content {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  color: #000;
+  h3{
+    margin-bottom: 10px;
+  }
+}
+.task-modal-overlay.dark .task-modal-content {
+  background-color: #1f2937;
+  color: #f4f4f4;
 }

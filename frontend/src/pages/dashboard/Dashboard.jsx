@@ -3,6 +3,7 @@ import axios from "axios";
 import TaskForm from "./TaskForm";
 import { AiOutlineEdit, AiOutlineDelete, AiOutlineBulb } from "react-icons/ai";
 import DeleteConfirmModal from "../../modals/DeleteModal";
+import KanbanBoard from "./KanbanBoard";
 import "./Dashboard.css"; 
 
 export default function Dashboard() {
@@ -15,6 +16,7 @@ export default function Dashboard() {
   const [taskToDelete, setTaskToDelete] = useState(null);
 
   const [darkMode, setDarkMode] = useState(false);
+  const [viewMode, setViewMode] = useState("table"); // "table" or "kanban"
 
   const token = localStorage.getItem("token");
   const headers = { Authorization: `Bearer ${token}` };
@@ -23,19 +25,26 @@ export default function Dashboard() {
     const query = new URLSearchParams(filter).toString();
     const res = await axios.get(`http://localhost:5000/api/tasks?${query}`, { headers });
     setTasks(res.data);
+    fetchSummary(res.data); // update summary whenever tasks change
   };
 
-  const fetchSummary = async () => {
-    const res = await axios.get("http://localhost:5000/api/tasks/summary", { headers });
-    setSummary(res.data);
+  const fetchSummary = (tasksData) => {
+    const data = tasksData || tasks;
+    const total = data.length;
+    // Only count overdue tasks that are not done
+  const overdue = data.filter(task => task.dueDate && new Date(task.dueDate) < new Date() && task.status !== "Done").length;
+    const groupedByStatus = {
+      "To Do": data.filter(t => t.status === "To Do").length,
+      "In Progress": data.filter(t => t.status === "In Progress").length,
+      "Done": data.filter(t => t.status === "Done").length,
+    };
+    setSummary({ total, overdue, groupedByStatus });
   };
 
   useEffect(() => {
-    // Load theme from localStorage
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) setDarkMode(savedTheme === "dark");
     fetchTasks();
-    fetchSummary();
   }, [filter]);
 
   useEffect(() => {
@@ -48,7 +57,6 @@ export default function Dashboard() {
     setDeleteModalOpen(false);
     setTaskToDelete(null);
     fetchTasks();
-    fetchSummary();
   };
 
   const handleLogout = () => {
@@ -69,9 +77,14 @@ export default function Dashboard() {
           >
             <AiOutlineBulb />
           </button>
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
+          <button 
+            className="view-toggle-btn" 
+            onClick={() => setViewMode(viewMode === "table" ? "kanban" : "table")}
+            title={viewMode === "table" ? "Switch to Kanban View" : "Switch to Table View"}
+          >
+            {viewMode === "table" ? "Kanban View" : "Table View"}
           </button>
+          <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </header>
 
@@ -83,13 +96,9 @@ export default function Dashboard() {
           <div>Overdue: {summary.overdue || 0}</div>
           {summary.groupedByStatus &&
             Object.entries(summary.groupedByStatus).map(([status, count]) => (
-              <div key={status}>
-                {status}: {count}
-              </div>
+              <div key={status}>{status}: {count}</div>
             ))}
-          <button className="add-btn" onClick={() => setModalOpen(true)}>
-            Add Task
-          </button>
+          <button className="add-btn" onClick={() => setModalOpen(true)}>Add Task</button>
         </div>
 
         {/* Filters */}
@@ -115,48 +124,46 @@ export default function Dashboard() {
           </select>
         </div>
 
-        {/* Task Table */}
-        <div className="table-wrapper">
-          <table className="task-table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Priority</th>
-                <th>Status</th>
-                <th>Creation Date</th>
-                <th>Due Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tasks.map((task) => (
-                <tr key={task._id}>
-                  <td>{task.title}</td>
-                  <td>{task.description}</td>
-                  <td>
-                    <span className={`badge ${task.priority.toLowerCase()}`}>{task.priority}</span>
-                  </td>
-                  <td>{task.status}</td>
-                  <td>{task.createdAt ? new Date(task.createdAt).toLocaleDateString() : "-"}</td>
-                  <td>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}</td>
-                  <td>
-                    <AiOutlineEdit
-                      style={{ cursor: "pointer", marginRight: "10px" }}
-                      title="Edit"
-                      onClick={() => { setEditingTask(task); setModalOpen(true); }}
-                    />
-                    <AiOutlineDelete
-                      style={{ cursor: "pointer", color: "#ef4444" }}
-                      title="Delete"
-                      onClick={() => { setTaskToDelete(task._id); setDeleteModalOpen(true); }}
-                    />
-                  </td>
+        {/* Conditional Rendering: Table or Kanban */}
+        {viewMode === "table" ? (
+          <div className="table-wrapper">
+            <table className="task-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Creation Date</th>
+                  <th>Due Date</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {tasks.map((task) => (
+                  <tr key={task._id}>
+                    <td>{task.title}</td>
+                    <td>{task.description}</td>
+                    <td><span className={`badge ${task.priority.toLowerCase()}`}>{task.priority}</span></td>
+                    <td>{task.status}</td>
+                    <td>{task.createdAt ? new Date(task.createdAt).toLocaleDateString() : "-"}</td>
+                    <td>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}</td>
+                    <td>
+                      <AiOutlineEdit style={{ cursor: "pointer", marginRight: "10px" }} title="Edit"
+                        onClick={() => { setEditingTask(task); setModalOpen(true); }}
+                      />
+                      <AiOutlineDelete style={{ cursor: "pointer", color: "#ef4444" }} title="Delete"
+                        onClick={() => { setTaskToDelete(task._id); setDeleteModalOpen(true); }}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <KanbanBoard tasks={tasks} fetchTasks={fetchTasks} fetchSummary={fetchSummary} darkMode={darkMode} />
+        )}
       </main>
 
       {/* Footer */}
@@ -167,13 +174,14 @@ export default function Dashboard() {
       {/* Modals */}
       {modalOpen && (
         <TaskForm
-          fetchTasks={fetchTasks}
-          fetchSummary={fetchSummary}
-          closeModal={() => { setModalOpen(false); setEditingTask(null); }}
-          editingTask={editingTask}
-          setEditingTask={setEditingTask}
+        fetchTasks={fetchTasks}
+        fetchSummary={fetchSummary}
+        closeModal={() => { setModalOpen(false); setEditingTask(null); }}
+        editingTask={editingTask}
+        setEditingTask={setEditingTask}
+        darkMode={darkMode}
         />
-      )}
+        )}
       <DeleteConfirmModal
         isOpen={deleteModalOpen}
         onClose={() => { setDeleteModalOpen(false); setTaskToDelete(null); }}
