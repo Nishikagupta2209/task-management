@@ -63,7 +63,7 @@ export default function Register() {
         }
       );
       alert(res.data.message);
-      window.location.href = "/login";
+      window.location.href = "/task/login";
     } catch (err) {
       setErrors({
         general: err.response?.data?.message || "Registration failed",
@@ -146,7 +146,7 @@ export default function Register() {
           {/* Login Option */}
           <p style={{ marginTop: "15px", textAlign: "center" }}>
             Already have an account?{" "}
-            <Link to="/login" style={{ color: "#007bff", fontWeight: "500" }}>
+            <Link to="/task/login" style={{ color: "#007bff", fontWeight: "500" }}>
               Login here
             </Link>
           </p>

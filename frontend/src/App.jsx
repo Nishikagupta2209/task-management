@@ -12,12 +12,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/task/login" element={<Login />} />
+        <Route path="/task/register" element={<Register />} />
          <Route path="/logout" element={<Login />} />
          {/* Protected Route */}
         <Route
-          path="/dashboard"
+          path="/task/dashboard"
           element={
             <ProtectedRoute>
               <Dashboard />

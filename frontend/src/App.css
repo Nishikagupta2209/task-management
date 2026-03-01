@@ -21,7 +21,7 @@ body {
 /* Headings */
 h2 {
   margin-bottom: 20px;
-  color: #1f2937;
+
   text-align: center;
 }
 
@@ -83,11 +83,6 @@ button {
   font-size: 14px;
   transition: background-color 0.2s;
 }
-
-button:hover {
-  background-color: #2563eb;
-}
-
 /* Dashboard specific */
 .dashboard-container {
   max-width: 1000px;
@@ -124,7 +119,6 @@ button:hover {
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
-  justify-content: center;
 }
 
 .task-form input, .task-form select {
@@ -247,4 +241,75 @@ button:hover {
 
 .rule .icon {
   font-weight: bold;
+}
+/* Dark mode wrapper */
+.dashboard-wrapper.dark {
+  background-color: #121212;
+  color: #f4f4f4;
+}
+
+/* Dark mode summary cards */
+.dashboard-wrapper.dark .summary div {
+  background-color: #1f2937;
+  color: #f4f4f4;
+}
+
+/* Dark mode table */
+.dashboard-wrapper.dark .task-table {
+  background-color: #1f2937;
+  color: #f4f4f4;
+}
+
+.dashboard-wrapper.dark .task-table th {
+  background-color: #374151;
+  color: #f4f4f4;
+}
+
+.dashboard-wrapper.dark .task-table td {
+  border-color: #4b5563;
+}
+/* Dark mode badges adjustment for visibility */
+.dashboard-wrapper.dark .badge.low { background-color: #065f46; color: #d1fae5; }
+.dashboard-wrapper.dark .badge.medium { background-color: #78350f; color: #fef3c7; }
+.dashboard-wrapper.dark .badge.high { background-color: #991b1b; color: #fee2e2; }
+
+/* Dark mode filters and inputs */
+.dashboard-wrapper.dark select,
+.dashboard-wrapper.dark input,
+.dashboard-wrapper.dark .desc {
+  background-color: #1f2937;
+  color: #f4f4f4;
+  border: 1px solid #4b5563;
+}
+.theme-toggle-btn {
+  background-color: #fbbf24;
+  color: #222;
+}
+.task-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.task-modal-content {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  color: #000;
+  h3{
+    margin-bottom: 10px;
+  }
+}
+.task-modal-overlay.dark .task-modal-content {
+  background-color: #1f2937;
+  color: #f4f4f4;
 }

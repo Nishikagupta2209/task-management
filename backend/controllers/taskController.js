@@ -33,7 +33,7 @@ export const getTasks = async (req, res) => {
     else query = query.sort({ createdAt: -1 });
 
     const tasks = await query;
-    res.json(tasks);
+    res.status(200).json(tasks);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -82,7 +82,7 @@ export const getSummary = async (req, res) => {
       return acc;
     }, {});
 
-    res.json({ total, overdue, groupedByStatus });
+    res.status(200).json({ total, overdue, groupedByStatus });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
