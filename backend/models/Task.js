@@ -6,7 +6,7 @@ const taskSchema = new mongoose.Schema({
   priority: { type: String, enum: ["Low", "Medium", "High"], default: "Low" },
   dueDate: { type: Date },
   status: { type: String, enum: ["To Do", "In Progress", "Done"], default: "To Do" },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true } //creates index for faster queries
 }, { timestamps: true });
 
 export default mongoose.model("Task", taskSchema);
