@@ -14,33 +14,38 @@ describe("Task Controller Unit Tests", () => {
   });
 
   it("createTask → should create task successfully", async () => {
-    const req = {
-      body: {
-        title: "Test Task",
-        description: "Task description",
-        priority: "Low",
-        status: "To Do",
-        dueDate: "2026-02-19",
-      },
-      user: { id: "123" },
-    };
+  const req = {
+    body: {
+      title: "Test Task",
+      description: "Task description",
+      priority: "Low",
+      status: "To Do",
+      dueDate: "2026-02-19",
+    },
+    user: { id: "123" },
+    app: {
+      get: jest.fn().mockReturnValue({
+        emit: jest.fn(), // mock io.emit
+      }),
+    },
+  };
 
-    // Mocking Task.prototype.save to simulate instance save
-    const saveMock = jest.spyOn(Task.prototype, "save").mockResolvedValue({
-      _id: "mockId123",
-      ...req.body,
-      userId: req.user.id,
-    });
-
-    await createTask(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ title: "Test Task" })
-    );
-
-    saveMock.mockRestore(); // restore original save after test
+  // Mocking Task.prototype.save to simulate instance save
+  const saveMock = jest.spyOn(Task.prototype, "save").mockResolvedValue({
+    _id: "mockId123",
+    ...req.body,
+    userId: req.user.id,
   });
+
+  await createTask(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(201);
+  expect(res.json).toHaveBeenCalledWith(
+    expect.objectContaining({ title: "Test Task" })
+  );
+
+  saveMock.mockRestore(); // restore original save after test
+});
 
   it("getTasks → should return tasks for user", async () => {
     const req = {
